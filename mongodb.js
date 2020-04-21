@@ -6,22 +6,6 @@ const { MongoClient, ObjectID } = require('mongodb')
 const connectionURL = 'mongodb://127.0.0.1:27017'
 const databaseName = 'task-manager'
 
-//doc: https://docs.mongodb.com/manual/reference/method/ObjectId/
-/*
-Returns a new ObjectId value. The 12-byte ObjectId value consists of:
-
-    a 4-byte timestamp value, representing the ObjectId’s creation, measured in seconds since the Unix epoch
-    a 5-byte random value
-    a 3-byte incrementing counter, initialized to a random value
-*/
-const id = new ObjectID()
-console.log(id)
-console.log(id.getTimestamp())
-
-//compare the lenght of id in binary 12 vs string 14, that´s the reason why mongo store the id in binary
-console.log(id.id.length)
-console.log(id.toHexString().length)
-
 //connect to server
 MongoClient.connect( connectionURL, { useNewUrlParser: true, useUnifiedTopology: true }, ( error, client ) => {
 
@@ -32,21 +16,46 @@ MongoClient.connect( connectionURL, { useNewUrlParser: true, useUnifiedTopology:
     //get the connection to specific DB
     const db = client.db(databaseName)
 
-    //insert document
-    // Add a callback function to verify if insert was correctly
-    db.collection('users').insertOne(
-        {
-            _id: id,
-            name: 'Victor',
-            age: 40
-        }, ( error, result ) => {
+    //findOne: if query matches, first document is returned, otherwise null
+    //Search by name
+    db.collection('users').findOne({ name: 'Elias' }, ( error, user ) => {
 
-            if( error ) {
-                return console.log('Unable to insert user')
-            }
-    
-            //ops: is an array with Documents
-            console.log(result.ops)
+        if(error) {
+           return console.log('Unable to fetch') 
+        }
 
+        console.log(user)
     })
+
+    //Search by ID, need to convert to object
+    db.collection('users').findOne({ _id: new ObjectID('5e9f42046b2921480868b140') }, ( error, user ) => {
+
+        if(error) {
+           return console.log('Unable to fetch') 
+        }
+
+        console.log(user)
+    })
+
+    //find: nomatter number of documents matched, a cursor is returned, never null
+    //Array of elements
+    db.collection('users').find( { age: 26 } ).toArray( ( error, users ) => {
+
+        if(error) {
+           return console.log('Unable to fetch') 
+        }
+
+        console.log(users)
+    })
+
+    //count the total of elements
+    db.collection('users').find( { age: 26 } ).count( ( error, count ) => {
+
+        if(error) {
+           return console.log('Unable to fetch') 
+        }
+
+        console.log(count)
+    })
+
 })
