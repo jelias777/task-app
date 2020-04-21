@@ -18,6 +18,10 @@ const id = new ObjectID()
 console.log(id)
 console.log(id.getTimestamp())
 
+//compare the lenght of id in binary 12 vs string 14, that´s the reason why mongo store the id in binary
+console.log(id.id.length)
+console.log(id.toHexString().length)
+
 //connect to server
 MongoClient.connect( connectionURL, { useNewUrlParser: true, useUnifiedTopology: true }, ( error, client ) => {
 
