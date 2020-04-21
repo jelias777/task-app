@@ -19,17 +19,21 @@ MongoClient.connect( connectionURL, { useNewUrlParser: true, useUnifiedTopology:
 
     //insert document
     // Add a callback function to verify if insert was correctly
-    db.collection('users').insertOne({
-        name: 'Jorge',
-        age: 26
-    }, (error, result) => {
+    db.collection('users').insertMany(
+        [{
+            name: 'Elias',
+            age: 28
+        },{
+            name: 'Ana',
+            age: 30
+        }], ( error, result ) => {
 
-        if( error ) {
-            return console.log('Unable to insert user')
-        }
-
-        //ops: is an array with Documents
-        console.log(result.ops)
+            if( error ) {
+                return console.log('Unable to insert user')
+            }
+    
+            //ops: is an array with Documents
+            console.log(result.ops)
 
     })
 })
