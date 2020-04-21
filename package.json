@@ -1,0 +1,22 @@
+{
+  "name": "node-mongodb-jwt",
+  "version": "1.0.0",
+  "description": "Node.js application",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joelias71/node-mongodb-jwt.git"
+  },
+  "author": "Jorge Elias",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joelias71/node-mongodb-jwt/issues"
+  },
+  "homepage": "https://github.com/joelias71/node-mongodb-jwt#readme",
+  "dependencies": {
+    "mongodb": "^3.5.6"
+  }
+}
