@@ -17,9 +17,19 @@ MongoClient.connect( connectionURL, { useNewUrlParser: true, useUnifiedTopology:
     //get the connection to specific DB
     const db = client.db(databaseName)
 
-    //insert
+    //insert document
+    // Add a callback function to verify if insert was correctly
     db.collection('users').insertOne({
         name: 'Jorge',
         age: 26
+    }, (error, result) => {
+
+        if( error ) {
+            return console.log('Unable to insert user')
+        }
+
+        //ops: is an array with Documents
+        console.log(result.ops)
+
     })
 })
