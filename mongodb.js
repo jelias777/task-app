@@ -16,18 +16,11 @@ MongoClient.connect( connectionURL, { useNewUrlParser: true, useUnifiedTopology:
     //get the connection to specific DB
     const db = client.db(databaseName)
 
-    //update(filter, value, callback)
-    //In case of not using callback, is changed by a promise like in this example
-    //docs: https://docs.mongodb.com/manual/tutorial/update-documents/
-    //modifiedCount 1if change
-    db.collection('users').updateOne({
-        _id: new ObjectID('5e9f3fa8c31fe729f4cba6bf')
-    },{
-        $set: {
-            name: 'Matt'
-        }
+    //delete funcitons deleteOne & deleteMany
+    db.collection('users').deleteMany({
+        age: 30
     }).then((result) => {
-        console.log(result.modifiedCount)
+        console.log(result)
     }).catch((error) => {
         console.log(error)
     })
