@@ -16,47 +16,33 @@ MongoClient.connect( connectionURL, { useNewUrlParser: true, useUnifiedTopology:
     //get the connection to specific DB
     const db = client.db(databaseName)
 
-    //findOne: if query matches, first document is returned, otherwise null
-    //Search by name
-    db.collection('users').findOne({ name: 'Elias' }, ( error, user ) => {
-
-        if(error) {
-           return console.log('Unable to fetch') 
+    //update(filter, value, callback)
+    //In case of not using callback, is changed by a promise like in this example
+    //docs: https://docs.mongodb.com/manual/tutorial/update-documents/
+    //modifiedCount 1if change
+    db.collection('users').updateOne({
+        _id: new ObjectID('5e9f3fa8c31fe729f4cba6bf')
+    },{
+        $set: {
+            name: 'Matt'
         }
-
-        console.log(user)
+    }).then((result) => {
+        console.log(result.modifiedCount)
+    }).catch((error) => {
+        console.log(error)
     })
 
-    //Search by ID, need to convert to object
-    db.collection('users').findOne({ _id: new ObjectID('5e9f42046b2921480868b140') }, ( error, user ) => {
-
-        if(error) {
-           return console.log('Unable to fetch') 
+    //Use of $inc
+    db.collection('users').updateOne({
+        _id: new ObjectID('5e9f3fa8c31fe729f4cba6bf')
+    },{
+        $inc: {
+            age: 4
         }
-
-        console.log(user)
+    }).then((result) => {
+        console.log(result.modifiedCount)
+    }).catch((error) => {
+        console.log(error)
     })
-
-    //find: nomatter number of documents matched, a cursor is returned, never null
-    //Array of elements
-    db.collection('users').find( { age: 26 } ).toArray( ( error, users ) => {
-
-        if(error) {
-           return console.log('Unable to fetch') 
-        }
-
-        console.log(users)
-    })
-
-    //count the total of elements
-    db.collection('users').find( { age: 26 } ).count( ( error, count ) => {
-
-        if(error) {
-           return console.log('Unable to fetch') 
-        }
-
-        console.log(count)
-    })
-
     
 })
