@@ -58,12 +58,15 @@ usr.save().then((usr) => {
     console.log('Error: ' , error)
 })
 
-/*const Task = mongoose.model('Task', {
+const Task = mongoose.model('Task', {
     description: {
-        type: String
+        type: String,
+        required: true,
+        trim: true
     },
     completed: {
-        type: Boolean
+        type: Boolean,
+        default: false
     }
 })
 
@@ -76,4 +79,4 @@ task.save().then(() => {
     console.log(task)
 }).catch((error) => {
     console.log('Error: ' , error)
-})*/
+})
