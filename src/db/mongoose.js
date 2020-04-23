@@ -32,12 +32,24 @@ const User = mongoose.model('User', {
                 throw new Error('Age must be greater than 0')
             }
         }
+    },
+    password: {
+        type: String,
+        required: true,
+        minlength: 8,
+        trim: true,
+        validate(pwd) {
+            if (pwd.toLowerCase().includes('password')) {
+                throw new Error('Password is not valid, cannot contain "password"')
+            }
+        }
     }
 })
 
 const usr = new User({
     name: ' Elias ',
-    email: 'jelias@test.com'
+    email: 'jelias@test.com',
+    password: '12345678'
 })
 
 usr.save().then((usr) => {
