@@ -51,6 +51,37 @@ app.get('/users/:id', async (req, res) => {
 
 })
 
+//patch = update
+//patch: you can update part of the doc, with put you update the entire document
+app.patch('/users/:id', async (req, res) => {
+    const updates = Object.keys(req.body)
+    //only fields allowed to do a change
+    const allowedUpdates = ['name','age','password','email']
+
+    const isValidOperation = updates.every((update) => {
+        return allowedUpdates.includes(update)
+    })
+
+    if (!isValidOperation) {
+        return res.status(400).send({error: 'Invalid updates!'})
+    }
+
+    try {
+        //new:true return the user before the update
+        //runValidators run validation
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators:true })
+
+        if(!user) {
+            return res.status(400).send()
+        }
+
+        res.status(200).send(user)
+
+    } catch (e) {
+        res.status(400).send(e)
+    }
+})
+
 app.post('/tasks', async (req, res) => {
 
     const task = new Task(req.body)
@@ -87,6 +118,28 @@ app.get('/tasks/:id', async (req, res) => {
 
     } catch (e) {
         res.status(500).send()
+    }
+})
+
+app.patch('/tasks/:id', async (req, res) => {
+    const updates = Object.keys(req.body)
+    //only fields allowed to do a change
+    const allowedUpdates = ['description','completed']
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+
+    if(!isValidOperation) {
+        return res.status(400).send({error: 'Invalid updates!'})
+    }
+
+    try {
+        const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true})
+        if(!task) {
+            return res.status(400).send()
+        }
+
+        res.status(200).send(task)
+    } catch (e) {
+        res.status(400).send(e)
     }
 })
 
