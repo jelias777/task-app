@@ -21,6 +21,30 @@ app.post('/users', (req, res) => {
     })
 })
 
+app.get('/users', (req, res) => {
+    //inside the find method could be added some search criteria
+    //find doc: https://mongoosejs.com/docs/queries.html
+    User.find({}).then((users) => {
+        res.send(users)
+    }).catch((e) => {
+        res.status(500).send()
+    })
+})
+
+app.get('/users/:id', (req, res) => {
+    const id = req.params.id
+
+    User.findById(id).then((user) => {
+        if(!user) {
+            return res.status(404).send()
+        }
+        res.send(user)
+
+    }).catch((e) => {
+        res.status(500).send()
+    })
+})
+
 app.post('/tasks', (req, res) => {
 
     const task = new Task(req.body)
@@ -31,6 +55,29 @@ app.post('/tasks', (req, res) => {
         res.status(400).send(e)
     })
 
+})
+
+app.get('/tasks', (req, res) => {
+
+    Task.find({}).then((tasks) => {
+        res.send(tasks)
+    }).catch((e) => {
+        res.status(500).send()
+    })
+})
+
+app.get('/tasks/:id', (req, res) => {
+
+    const id = req.params.id
+
+    Task.findById(id).then((task) => {
+        if(!task) {
+            return res.status(404).send()
+        }
+        res.send(task)
+    }).catch((e) => {
+        res.status(500).send()
+    })
 })
 
 app.listen(port, () => {
