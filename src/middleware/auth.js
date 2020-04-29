@@ -13,6 +13,7 @@ const auth = async ( req, res, next ) => {
             throw new Error('Invalid authentication')
         }
 
+        req.token = token
         req.user = user
         next()
 
