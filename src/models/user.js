@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -39,9 +40,30 @@ const userSchema = new mongoose.Schema({
                 throw new Error('Password is not valid, cannot contain "password"')
             }
         }
-    }
+    },
+    tokens: [{
+        token: {
+            type: String,
+            required: true
+        }
+    }]
 })
 
+//this method is used to generate the token
+//use of methods means that is part of the instance
+userSchema.methods.generateAuthToken = async function () {
+    const user = this
+    const token = jwt.sign({ _id: user._id.toString() }, 'thisisthekey')
+
+    //Save the token to the user
+    user.tokens = user.tokens.concat({ token })
+    await user.save()
+
+    return token
+}
+
+//This method find the user by email, and validate the password to login
+//Use satitic means that is part ob the object
 userSchema.statics.findByCredencials = async (email, password) => {
     const user = await User.findOne({ email })
 
@@ -59,6 +81,7 @@ userSchema.statics.findByCredencials = async (email, password) => {
 }
 
 //Hash the plain text password before saving
+//.pre is used to be ejecuted before is saved in the DB
 userSchema.pre('save', async function (next) {
     
     const user = this
