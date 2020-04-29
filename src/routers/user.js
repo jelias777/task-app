@@ -1,5 +1,6 @@
 const express = require('express')
 const User = require('../models/user')
+const auth = require('../middleware/auth')
 const router =  new express.Router()
 
 router.post('/users', async (req, res) => {
@@ -30,18 +31,11 @@ router.post('/users/login', async (req, res) => {
     }
 })
 
-router.get('/users', async (req, res) => {
-    //inside the find method could be added some search criteria
-    //find doc: https://mongoosejs.com/docs/queries.html
-    try {
-        const users = await User.find({})
-        res.send(users)
-    } catch (e) {
-        res.status(500).send()
-    }
+router.get('/users', auth,  async (req, res) => {
+    res.send(req.user)
 })
 
-router.get('/users/:id', async (req, res) => {
+router.get('/users/:id', auth, async (req, res) => {
     const id = req.params.id
 
     try {
@@ -61,7 +55,7 @@ router.get('/users/:id', async (req, res) => {
 
 //patch = update
 //patch: you can update part of the doc, with put you update the entire document
-router.patch('/users/:id', async (req, res) => {
+router.patch('/users/:id', auth, async (req, res) => {
     const updates = Object.keys(req.body)
     //only fields allowed to do a change
     const allowedUpdates = ['name','age','password','email']
@@ -92,7 +86,7 @@ router.patch('/users/:id', async (req, res) => {
     }
 })
 
-router.delete('/users/:id', async (req, res) => {
+router.delete('/users/:id', auth, async (req, res) => {
      
     try {
         //User that is going to be deleted
