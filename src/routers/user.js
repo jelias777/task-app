@@ -15,6 +15,18 @@ router.post('/users', async (req, res) => {
 
 })
 
+router.post('/users/login', async (req, res) => {
+    try {
+
+        const user = await User.findByCredencials(req.body.email, req.body.password)
+
+        res.send(user)
+
+    } catch (e) {
+        res.status(400).send({msg: e.toString()})
+    }
+})
+
 router.get('/users', async (req, res) => {
     //inside the find method could be added some search criteria
     //find doc: https://mongoosejs.com/docs/queries.html
