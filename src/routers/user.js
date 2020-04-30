@@ -19,13 +19,9 @@ router.post('/users', async (req, res) => {
 
 router.post('/users/login', async (req, res) => {
     try {
-
         const user = await User.findByCredencials(req.body.email, req.body.password)
-
         const token = await user.generateAuthToken()
-
         res.send({ user, token })
-
     } catch (e) {
         res.status(400).send({msg: e.toString()})
     }
@@ -57,31 +53,14 @@ router.post('/users/logoutAll', auth, async (req, res) => {
     }
 })
 
-router.get('/users', auth,  async (req, res) => {
+//Get your profile
+router.get('/users/me', auth,  async (req, res) => {
     res.send(req.user)
-})
-
-router.get('/users/:id', auth, async (req, res) => {
-    const id = req.params.id
-
-    try {
-        const user = await User.findById(id)
-
-        if(!user) {
-            return res.status(404).send()
-        }
-
-        res.send(user)
-
-    } catch (e) {
-        res.status(500).send()
-    }
-
 })
 
 //patch = update
 //patch: you can update part of the doc, with put you update the entire document
-router.patch('/users/:id', auth, async (req, res) => {
+router.patch('/users/me', auth, async (req, res) => {
     const updates = Object.keys(req.body)
     //only fields allowed to do a change
     const allowedUpdates = ['name','age','password','email']
@@ -95,34 +74,23 @@ router.patch('/users/:id', auth, async (req, res) => {
     }
 
     try {
-
-        const user = await User.findById(req.params.id)
         //bracket notation instead of dot notation
-        updates.forEach((update) => user[update] = req.body[update] )
-        user.save()
-
-        if(!user) {
-            return res.status(400).send()
-        }
-
-        res.status(200).send(user)
+        updates.forEach((update) => req.user[update] = req.body[update] )
+        await req.user.save()
+        res.status(200).send(req.user)
 
     } catch (e) {
         res.status(400).send(e)
     }
 })
 
-router.delete('/users/:id', auth, async (req, res) => {
+//route to delete your own user
+router.delete('/users/me', auth, async (req, res) => {
      
     try {
-        //User that is going to be deleted
-        const user = await User.findByIdAndDelete(req.params.id)
-
-        if(!user) {
-            return res.status(404).send({msg: 'The user doesn\'t exist'})
-        }
-
-        res.send(user)
+        //User that is attached on the request, use the remove method of moongoose
+        req.user.remove()
+        res.send(req.user)
     } catch (e) {
         res.status(500).send()
     }
