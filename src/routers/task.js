@@ -22,13 +22,25 @@ router.post('/tasks', auth, async (req, res) => {
 
 router.get('/tasks', auth, async (req, res) => {
 
+    const match = {}
+
+    if(req.query.completed) {
+        match.completed = req.query.completed === 'true'
+    }
+
     try {
         //Use find method with param
-        const tasks = await Task.find({ user_id: req.user._id })
+        const tasks = await Task.find({ 
+            user_id: req.user._id,
+            completed: match.completed
+        })
 
         //Using populate approach
-        //await req.user.populate('tasks').execPopulate()
-        //res.send(req.user.tasks)
+        /*await req.user.populate({
+            path: 'tasks',
+            match
+        }).execPopulate()
+        res.send(req.user.tasks)*/
 
         res.send(tasks)
     } catch (e) {
