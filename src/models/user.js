@@ -49,6 +49,16 @@ const userSchema = new mongoose.Schema({
     }]
 })
 
+//virtual property (name, object)
+//ref is the reference to the model
+//localfield and foreignfield are the relation betweenthe models
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id',
+    foreignField: 'user_id'
+})
+
+//overwrite JSON
 userSchema.methods.toJSON = function () {
     const user = this
     const userObject = user.toObject()
