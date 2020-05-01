@@ -13,8 +13,12 @@ const auth = async ( req, res, next ) => {
             throw new Error('Invalid authentication')
         }
 
+        //Add the token & user to the request
+        //so it can be accesed in any route
         req.token = token
         req.user = user
+
+        //Continue with the flow
         next()
 
     } catch(e) {
