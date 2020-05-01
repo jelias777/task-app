@@ -22,12 +22,19 @@ router.post('/tasks', auth, async (req, res) => {
 
 // GET /tasks?completed=true
 // GET /tasks?limit=10&skip=20 (limit * # of page)
+// GET /tasks?sortBy={field}:asc (asc or desc), the separator could be : or any character
 router.get('/tasks', auth, async (req, res) => {
 
     const match = {}
+    const sort = {}
 
     if(req.query.completed) {
         match.completed = req.query.completed === 'true'
+    }
+
+    if(req.query.sortBy) {
+        const parts = req.query.sortBy.split(':')
+        sort[parts[0]] = parts[1] === 'asc' ? 1 : -1
     }
 
     try {
@@ -37,7 +44,8 @@ router.get('/tasks', auth, async (req, res) => {
             completed: match.completed,
             options: {
                 limit: parseInt(req.query.limit),
-                skip: parseInt(req.query.skip)
+                skip: parseInt(req.query.skip),
+                sort
             }
         })
 
@@ -47,7 +55,8 @@ router.get('/tasks', auth, async (req, res) => {
             match,
             options: {
                 limit: parseInt(req.query.limit),
-                skip: parseInt(req.query.skip)
+                skip: parseInt(req.query.skip),
+                sort
             }
         }).execPopulate()
         res.send(req.user.tasks)*/
