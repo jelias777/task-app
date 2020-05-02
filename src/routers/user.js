@@ -1,4 +1,5 @@
 const express = require('express')
+const multer = require('multer')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 const router =  new express.Router()
@@ -51,6 +52,25 @@ router.post('/users/logoutAll', auth, async (req, res) => {
     } catch (e) {
         res.status(500).send()
     }
+})
+
+const upload = multer({
+    dest:'profile_images',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file , callback) {
+        if(!file.originalname.toLowerCase().match(/\.(jpg|jpeg|png)$/)) {
+            return callback( new Error('Only images with extensions jpg, jpeg and png are accepted'))
+        }
+        callback(undefined, true)
+    }
+})
+
+router.post('/users/me/image', upload.single('avatar'), async (req, res) => {
+    res.send()
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message })
 })
 
 //Get your profile
