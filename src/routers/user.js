@@ -55,7 +55,6 @@ router.post('/users/logoutAll', auth, async (req, res) => {
 })
 
 const upload = multer({
-    dest:'profile_images',
     limits: {
         fileSize: 1000000
     },
@@ -67,7 +66,9 @@ const upload = multer({
     }
 })
 
-router.post('/users/me/image', upload.single('avatar'), async (req, res) => {
+router.post('/users/me/image', auth, upload.single('image'), async (req, res) => {
+    req.user.profile_image = req.file.buffer
+    await req.user.save()
     res.send()
 }, (error, req, res, next) => {
     res.status(400).send({ error: error.message })
