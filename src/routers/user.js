@@ -74,6 +74,12 @@ router.post('/users/me/image', auth, upload.single('image'), async (req, res) =>
     res.status(400).send({ error: error.message })
 })
 
+router.delete('/users/me/image', auth, async (req, res) => {
+    req.user.profile_image = undefined
+    await req.user.save()
+    res.send()
+})
+
 //Get your profile
 router.get('/users/me', auth,  async (req, res) => {
     res.send(req.user)
