@@ -30,7 +30,7 @@ $ sudo npm install
 
 Inside the folder config set the following environment variables:
 
-- PORT: Is the port 
+- PORT: Is the port where the application is going to run
 - JWT_SECRET: Is the secret key used to authenticate
 - MONGODB_URL: Is the url connection to Mongo DB
 
