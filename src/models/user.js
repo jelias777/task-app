@@ -64,13 +64,15 @@ userSchema.virtual('tasks', {
     foreignField: 'user_id'
 })
 
-//overwrite JSON
+//overwrite toJSON
+//Is used to remove data that is send to the client
 userSchema.methods.toJSON = function () {
     const user = this
     const userObject = user.toObject()
 
     delete userObject.password
     delete userObject.tokens
+    delete userObject.profile_image
 
     return userObject
 }
@@ -89,7 +91,7 @@ userSchema.methods.generateAuthToken = async function () {
 }
 
 //This method find the user by email, and validate the password to login
-//Use satitic means that is part ob the object
+//Use static means that is part ob the object
 userSchema.statics.findByCredencials = async (email, password) => {
     const user = await User.findOne({ email })
 

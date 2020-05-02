@@ -1,5 +1,6 @@
 const express = require('express')
 const multer = require('multer')
+const sharp = require('sharp')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 const router =  new express.Router()
@@ -67,7 +68,8 @@ const upload = multer({
 })
 
 router.post('/users/me/image', auth, upload.single('image'), async (req, res) => {
-    req.user.profile_image = req.file.buffer
+    const buffer = await sharp(req.file.buffer).resize({ width:250, height:250 }).png().toBuffer()
+    req.user.profile_image = buffer
     await req.user.save()
     res.send()
 }, (error, req, res, next) => {
@@ -85,10 +87,10 @@ router.get('/users/:id/image', async (req, res) => {
         const user = await User.findById(req.params.id)
 
         if (!user || !user.profile_image) {
-            throw new Error('T')
+            throw new Error('Image doesn\'t exist')
         }
         //Add header to the response, is key value
-        res.set('Content-Type', 'image/jpg')
+        res.set('Content-Type', 'image/png')
         res.send(user.profile_image)
     } catch (e) {
         res.status(404).send({ error: error.message })
