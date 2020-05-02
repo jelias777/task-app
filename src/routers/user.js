@@ -80,6 +80,21 @@ router.delete('/users/me/image', auth, async (req, res) => {
     res.send()
 })
 
+router.get('/users/:id/image', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+
+        if (!user || !user.profile_image) {
+            throw new Error('T')
+        }
+        //Add header to the response, is key value
+        res.set('Content-Type', 'image/jpg')
+        res.send(user.profile_image)
+    } catch (e) {
+        res.status(404).send({ error: error.message })
+    }
+})
+
 //Get your profile
 router.get('/users/me', auth,  async (req, res) => {
     res.send(req.user)
